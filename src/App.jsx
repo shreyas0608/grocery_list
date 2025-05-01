@@ -1,33 +1,54 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import Footer from './components/Footer'
+import AddItem from './components/AddItem'
+import ItemList from './components/ItemList'
+import Header from './components/Header'
 
 function App() {
-  const [count, setCount] = useState(0)
+  let [items,setItems]=useState([]);
+  
+  function addItem(item){
+    let itemList=[...items]
+    let payload={
+      id: new Date().getTime(),
+      selected:false,
+      ...item
+    }
+    itemList.push(payload);
+    setItems(itemList);
+  }
+
+    
+  function deleteItem(id){
+    let itemList=[...items]
+    itemList=itemList.filter(item=>item.id!=id);
+    setItems(itemList);
+  }
+
+  function selectItem(id){
+
+    let itemList=[...items]
+    let selectedItemIndex=itemList.findIndex(item=>item.id==id);
+    if(selectedItemIndex>-1){
+      let itemsList=[...items];
+      itemsList[selectedItemIndex]={
+        ...itemsList[selectedItemIndex],
+        selected: !itemsList[selectedItemIndex].selected
+      }
+      setItems(itemsList);
+    }
+  }
+
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+      <Header></Header>
+      <div class="body-container">
+        <AddItem addItem={addItem} ></AddItem>
+        <ItemList items={items} deleteItem={deleteItem} selectItem={selectItem}></ItemList>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Footer  items={items}></Footer>
     </>
   )
 }
